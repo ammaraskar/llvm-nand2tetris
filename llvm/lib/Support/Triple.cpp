@@ -78,6 +78,7 @@ StringRef Triple::getArchTypeName(ArchType Kind) {
   case x86:            return "i386";
   case x86_64:         return "x86_64";
   case xcore:          return "xcore";
+  case hack:           return "hack";
   }
 
   llvm_unreachable("Invalid ArchType!");
@@ -275,6 +276,7 @@ static Triple::ArchType parseBPFArch(StringRef ArchName) {
 Triple::ArchType Triple::getArchTypeForLLVMName(StringRef Name) {
   Triple::ArchType BPFArch(parseBPFArch(Name));
   return StringSwitch<Triple::ArchType>(Name)
+    .Case("hack", hack)
     .Case("aarch64", aarch64)
     .Case("aarch64_be", aarch64_be)
     .Case("aarch64_32", aarch64_32)
@@ -402,6 +404,7 @@ static Triple::ArchType parseARMArch(StringRef ArchName) {
 
 static Triple::ArchType parseArch(StringRef ArchName) {
   auto AT = StringSwitch<Triple::ArchType>(ArchName)
+    .Case("hack", Triple::hack)
     .Cases("i386", "i486", "i586", "i686", Triple::x86)
     // FIXME: Do we need to support these?
     .Cases("i786", "i886", "i986", Triple::x86)
@@ -694,6 +697,7 @@ static Triple::ObjectFormatType getDefaultFormat(const Triple &T) {
       return Triple::COFF;
     return Triple::ELF;
 
+  case Triple::hack:
   case Triple::aarch64_be:
   case Triple::amdgcn:
   case Triple::amdil64:
@@ -1270,6 +1274,7 @@ static unsigned getArchPointerBitWidth(llvm::Triple::ArchType Arch) {
   case llvm::Triple::UnknownArch:
     return 0;
 
+  case llvm::Triple::hack:
   case llvm::Triple::avr:
   case llvm::Triple::msp430:
     return 16;
@@ -1349,6 +1354,7 @@ Triple Triple::get32BitArchVariant() const {
   Triple T(*this);
   switch (getArch()) {
   case Triple::UnknownArch:
+  case Triple::hack:
   case Triple::amdgcn:
   case Triple::avr:
   case Triple::bpfeb:
@@ -1417,6 +1423,7 @@ Triple Triple::get64BitArchVariant() const {
   Triple T(*this);
   switch (getArch()) {
   case Triple::UnknownArch:
+  case Triple::hack:
   case Triple::arc:
   case Triple::avr:
   case Triple::csky:

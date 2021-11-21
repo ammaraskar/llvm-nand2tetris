@@ -101,7 +101,8 @@ public:
     renderscript32, // 32-bit RenderScript
     renderscript64, // 64-bit RenderScript
     ve,             // NEC SX-Aurora Vector Engine
-    LastArchType = ve
+    hack,           // Hack CPU from Nand2Tetris
+    LastArchType = hack
   };
   enum SubArchType {
     NoSubArch,

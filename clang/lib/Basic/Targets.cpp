@@ -13,6 +13,7 @@
 
 #include "Targets.h"
 
+#include "Targets/Hack.h"
 #include "Targets/AArch64.h"
 #include "Targets/AMDGPU.h"
 #include "Targets/ARC.h"
@@ -111,6 +112,9 @@ TargetInfo *AllocateTarget(const llvm::Triple &Triple,
   switch (Triple.getArch()) {
   default:
     return nullptr;
+
+  case llvm::Triple::hack:
+    return new HackTargetInfo(Triple, Opts);
 
   case llvm::Triple::arc:
     return new ARCTargetInfo(Triple, Opts);
