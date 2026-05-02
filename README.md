@@ -1,3 +1,39 @@
+# LLVM Nand2Tetris
+
+A fork of LLVM with a custom backend that supports the Hack ISA from
+nand2tetris.
+
+Part of my [nand-2-fpga-tetris](https://github.com/ammaraskar/nand-2-fpga-tetris)
+project.
+
+Currently this outputs my custom variant of Hack Assembly used by my project,
+not the one described in the original nand2tetris project.
+
+## Usage
+
+```bash
+./bin/clang -target hack -S test.c
+```
+
+## Building
+
+```
+mkdir build
+cd build
+cmake -G Ninja -DLLVM_TARGETS_TO_BUILD=Hack -DLLVM_ENABLE_PROJECTS=clang ../llvm
+ninja clang
+```
+
+## Tests
+
+You can run the llvm hack tests with:
+
+```bash
+TODO
+```
+
+---
+
 # The LLVM Compiler Infrastructure
 
 This directory and its sub-directories contain source code for LLVM,
