@@ -33,8 +33,14 @@ def GPR : RegisterClass<"Hack", [i16], 16,
     add A, D
   )>;
 
+// A class just to contain the D register.
+def DATA_REGS : RegisterClass<"Hack", [i16], 16,
+  (
+    add D
+  )>;
+
 // A separate class for registers that can be used for memory access (only A).
-def PTRREGS : RegisterClass<"Hack", [i16], 16,
+def PTR_REGS : RegisterClass<"Hack", [i16], 16,
   (
     add A
   )>;

@@ -22,6 +22,8 @@ HackTargetLowering::HackTargetLowering(const HackTargetMachine &TM)
     : TargetLowering(TM) {
   // Set up the register classes.
   addRegisterClass(MVT::i16, &Hack::GPRRegClass);
+  addRegisterClass(MVT::i16, &Hack::PTR_REGSRegClass);
+  addRegisterClass(MVT::i16, &Hack::DATA_REGSRegClass);
 
   // Compute derived properties from the register classes.
   computeRegisterProperties(TM.getSubtargetImpl()->getRegisterInfo());

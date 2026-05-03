@@ -50,11 +50,11 @@ void HackDAGToDAGISel::Select(SDNode *N) {
     SDLoc DL(N);
 
     int frameIndex = cast<FrameIndexSDNode>(N)->getIndex();
+    SDValue addr = CurDAG->getTargetConstant(frameIndex, DL, MVT::i16);
 
-    auto addr = CurDAG->getTargetConstant(frameIndex, DL, MVT::i16);
     SDNode *movImmediate = CurDAG->getMachineNode(Hack::AInstr, DL, MVT::i16, addr);
+    ReplaceNode(N, movImmediate);
 
-    CurDAG->ReplaceAllUsesWith(N, movImmediate);
     return;
   }
   }

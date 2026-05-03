@@ -22,15 +22,13 @@ class ATypeInstruction : Instruction {
   let hasSideEffects = false;
 
   bits<15> val;
-  // Take an ui15 immediate in, output is not dynamic (always goes into reg A)
-  // so we use Defs there.
+  // Take an ui15 immediate input and encode it into the instruction.
   let InOperandList = (ins i16imm:$val);
-  let OutOperandList = (outs);
-  let Defs = [A];
+  let OutOperandList = (outs PTR_REGS:$dst);
 
   // ASM and semantics.
   let AsmString = "A := $val";
-  let Pattern = [(set A, uimm15:$val)];
+  let Pattern = [(set PTR_REGS:$dst, uimm15:$val)];
 
   // Instruction encoding.
   field bits<16> Inst;
@@ -63,50 +61,47 @@ class CTypeInstruction<bits<7> opcode, bits<3> assignment_code, bits<3> jumpcode
 
 // Store to memory from register.
 let mayStore = 1,
-    hasSideEffects = 0,
-    Uses = [D] in
+    hasSideEffects = 0 in
 def STORE_D: CTypeInstruction<0b0001100, 0b010, 0b000,
-                              (outs), (ins),
+                              (outs), (ins DATA_REGS:$src, PTR_REGS:$addr),
                               "*A = D",
-                              [(store D, A)]>;
+                              [(store DATA_REGS:$src, PTR_REGS:$addr)]>;
 
 // Load to register from memory.
 let mayLoad = 1,
-    hasSideEffects = 0,
-    Uses = [A],
-    Defs = [D] in
+    hasSideEffects = 0 in
 def LOAD_D: CTypeInstruction<0b1110000, 0b010, 0b000,
-                             (outs), (ins),
+                             (outs DATA_REGS:$dst), (ins PTR_REGS:$addr),
                              "D = *A",
-                             [(set D, (load A))]>;
+                             [(set DATA_REGS:$dst, (load PTR_REGS:$addr))]>;
 
-// Load to register from memory.
+// Load from memory into A (pointer dereference to get a new address).
 let mayLoad = 1,
-    hasSideEffects = 0,
-    Uses = [A],
-    Defs = [A] in
+    hasSideEffects = 0 in
 def LOAD_A: CTypeInstruction<0b1110000, 0b100, 0b000,
-                             (outs), (ins),
-                             "D = *A",
-                             [(set D, (load A))]>;
+                             (outs PTR_REGS:$dst), (ins PTR_REGS:$addr),
+                             "A = *A",
+                             [(set PTR_REGS:$dst, (load PTR_REGS:$addr))]>;
 
 // Move from A to D
-let isMoveReg = 1,
-    Uses = [A],
-    Defs = [D] in
+let isMoveReg = 1 in
 def MOV_A_TO_D: CTypeInstruction<0b0110000, 0b010, 0b000,
-                                 (outs), (ins),
+                                 (outs DATA_REGS:$dst), (ins PTR_REGS:$src),
                                  "D = A",
-                                 [(set D, A)]>;
+                                 [(set DATA_REGS:$dst, PTR_REGS:$src)]>;
 
 // Move from D to A
-let isMoveReg = 1,
-    Uses = [D],
-    Defs = [A] in
+let isMoveReg = 1 in
 def MOV_D_TO_A: CTypeInstruction<0b0001100, 0b100, 0b000,
-                                 (outs), (ins),
+                                 (outs PTR_REGS:$dst), (ins DATA_REGS:$src),
                                  "A = D",
-                                 [(set A, D)]>;
+                                 [(set PTR_REGS:$dst, DATA_REGS:$src)]>;
+
+let isAdd = 1 in
+def ADD_A_TO_D: CTypeInstruction<0b0000010, 0b010, 0b000,
+                                 (outs DATA_REGS:$dst), (ins DATA_REGS:$src_one, PTR_REGS:$src_two),
+                                 "D = D + A",
+                                 [(set DATA_REGS:$dst, (add DATA_REGS:$src_one, PTR_REGS:$src_two))]>;
 
 // Unconditional jump: `0; jmp`
 let Uses = [A],

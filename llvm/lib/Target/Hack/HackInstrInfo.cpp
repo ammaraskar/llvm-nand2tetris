@@ -48,9 +48,9 @@ void HackInstrInfo::storeRegToStackSlot(MachineBasicBlock &MBB,
   }
 
   // Put frame pointer location in A.
-  BuildMI(MBB, MI, DL, get(Hack::AInstr)).addImm(16);
+  BuildMI(MBB, MI, DL, get(Hack::AInstr)).addDef(Hack::A).addImm(16);
   // Store D to pointer at A.
-  BuildMI(MBB, MI, DL, get(Hack::STORE_D));
+  BuildMI(MBB, MI, DL, get(Hack::STORE_D)).addUse(Hack::D, isKill ? RegState::Kill : 0).addUse(Hack::A);
 }
 
 void HackInstrInfo::loadRegFromStackSlot(MachineBasicBlock &MBB,
@@ -64,9 +64,9 @@ void HackInstrInfo::loadRegFromStackSlot(MachineBasicBlock &MBB,
   }
 
   // Put frame pointer location in A.
-  BuildMI(MBB, MI, DL, get(Hack::AInstr)).addImm(16);
+  BuildMI(MBB, MI, DL, get(Hack::AInstr)).addDef(Hack::A).addImm(16);
   // Load D from pointer in A.
-  BuildMI(MBB, MI, DL, get(Hack::LOAD_D));
+  BuildMI(MBB, MI, DL, get(Hack::LOAD_D)).addDef(Hack::D).addUse(Hack::A);
 
   if (DestReg != Hack::D) {
     // Move the data into register A.
