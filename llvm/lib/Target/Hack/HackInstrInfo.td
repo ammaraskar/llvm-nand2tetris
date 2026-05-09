@@ -97,11 +97,26 @@ def MOV_D_TO_A: CTypeInstruction<0b0001100, 0b100, 0b000,
                                  "A = D",
                                  [(set PTR_REGS:$dst, DATA_REGS:$src)]>;
 
+// Add A to D and store in D.
 let isAdd = 1 in
 def ADD_A_TO_D: CTypeInstruction<0b0000010, 0b010, 0b000,
                                  (outs DATA_REGS:$dst), (ins DATA_REGS:$src_one, PTR_REGS:$src_two),
                                  "D = D + A",
                                  [(set DATA_REGS:$dst, (add DATA_REGS:$src_one, PTR_REGS:$src_two))]>;
+
+// Add 1 to D and store in D.
+let isAdd = 1 in
+def INC_D: CTypeInstruction<0b0011111, 0b010, 0b001,
+                             (outs DATA_REGS:$dst), (ins DATA_REGS:$src),
+                             "D = D + 1",
+                             [(set DATA_REGS:$dst, (add DATA_REGS:$src, 1))]>;
+
+// Add 1 to A and store in A.
+let isAdd = 1 in
+def INC_A: CTypeInstruction<0b1111111, 0b100, 0b001,  // These bits are probably wrong lol.
+                             (outs PTR_REGS:$dst), (ins PTR_REGS:$src),
+                             "A = A + 1",
+                             [(set PTR_REGS:$dst, (add PTR_REGS:$src, 1))]>;
 
 // Unconditional jump: `0; jmp`
 let Uses = [A],

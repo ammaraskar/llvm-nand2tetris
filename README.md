@@ -32,6 +32,12 @@ You can run the llvm hack tests with:
 TODO
 ```
 
+For testing instruction selection:
+
+```bash
+./bin/clang -mllvm -debug -target hack -S test.c
+```
+
 ---
 
 # The LLVM Compiler Infrastructure
