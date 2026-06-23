@@ -23,6 +23,11 @@ long double  g8  = __builtin_nanl("");
 __float128   g8_2 = __builtin_nanf128("");
 #endif
 
+// Make sure nan builtins can handle wide strings.
+double wide_g6 = __builtin_nan((const char*) L"");
+float  wide_g7  = __builtin_nanf((const char*) L"");
+long double wide_g8  = __builtin_nanl((const char*) L"");
+
 // GCC constant folds these too (via native strtol):
 //double       g6_1  = __builtin_nan("1");
 //float        g7_1  = __builtin_nanf("1");

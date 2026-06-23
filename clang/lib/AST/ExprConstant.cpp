@@ -20004,7 +20004,7 @@ static bool TryEvaluateBuiltinNaN(const ASTContext &Context,
   llvm::APInt fill;
 
   // Treat empty strings as if they were zero.
-  if (S->getString().empty())
+  if (S->getLength() == 0)
     fill = llvm::APInt(32, 0);
   else if (S->getString().getAsInteger(0, fill))
     return false;
